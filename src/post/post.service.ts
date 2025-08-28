@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePostDto } from './post.dto';
+import { CreatePostDto } from './dto/create-post.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocument } from './post.schema';
 import { Model, Types } from 'mongoose';
+import { ObjectIdPipe } from 'src/pipes/ToObjectId';
 
 @Injectable()
 export class PostService {
@@ -24,8 +25,7 @@ export class PostService {
       .exec();
   }
 
-  async delete(id: string): Promise<Post | null> {
-    const objectId = new Types.ObjectId(id);
-    return this.postModel.findOneAndDelete({ _id: objectId }).exec();
+  async delete(id:ObjectIdPipe): Promise<Post | null> {
+    return await this.postModel.findOneAndDelete({ _id: id }).exec();
   }
 }
