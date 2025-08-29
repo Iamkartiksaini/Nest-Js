@@ -17,7 +17,7 @@ import { Types } from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -57,8 +57,9 @@ export class UserController {
     return this.userService.updateUser(id, body);
   }
   
-  @Delete(':name')
-  delte(@Param('name') name: string) {
-    return this.userService.delete(name);
+  @Delete(':id')
+  @ApiParam({ name: 'id', type: 'string' })
+  delete(@Param('id', ObjectIdPipe) id: Types.ObjectId,) {
+    return this.userService.delete(id);
   }
 }

@@ -25,6 +25,7 @@ export class PostController {
 
     @Delete(":id")
     @Roles(Role.ADMIN)
+    @ApiParam({name:"id",type:"string"})
     delete(@Param("id",ObjectIdPipe) id :ObjectIdPipe) {
     const data =  this.postService.delete(id);
         return "Deleted"+ id  

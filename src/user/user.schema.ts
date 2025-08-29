@@ -14,6 +14,9 @@ export class User {
 
   @Prop()
   role: string;
+
+  @Prop()
+  password: string;
 }
 
 
