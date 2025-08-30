@@ -8,20 +8,23 @@ import {
   Delete,
   Param,
   Patch,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ApiBearerAuth, ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiHeader, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ObjectIdPipe } from 'src/pipes/ToObjectId';
 import { Types } from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PublicApi } from 'src/guards/public.guard';
 
-
+  @ApiBearerAuth()
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post()
+  @PublicApi()
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @ApiBody({ type: CreateUserDto })
   create(@Body() createUserDto: CreateUserDto) {
@@ -29,6 +32,7 @@ export class UserController {
   }
 
   @Get()
+  @PublicApi()
   findAll() {
     return this.userService.findAll();
   }
@@ -46,7 +50,7 @@ export class UserController {
     description: 'This api will return updated data of user',
     status: 200,
   })
-    @ApiResponse({
+  @ApiResponse({
     description: 'User not Found',
     status: 404,
   })
@@ -56,10 +60,12 @@ export class UserController {
   ) {
     return this.userService.updateUser(id, body);
   }
-  
+
+  @ApiBearerAuth()
   @Delete(':id')
-  @ApiParam({ name: 'id', type: 'string' })
-  delete(@Param('id', ObjectIdPipe) id: Types.ObjectId,) {
+  @ApiParam({ name: 'id', type: 'string', description: "user unique id is required." })
+  delete(@Param('id', ObjectIdPipe) id: Types.ObjectId, @Req() req) {
+    console.log(req?.user)
     return this.userService.delete(id);
   }
 }

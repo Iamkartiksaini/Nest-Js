@@ -18,7 +18,7 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
-  const config = new DocumentBuilder().build();
+  const config = new DocumentBuilder().addBearerAuth().build();
 
   const customOptions: SwaggerCustomOptions = {
     swaggerOptions: {

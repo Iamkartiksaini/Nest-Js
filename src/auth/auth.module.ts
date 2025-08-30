@@ -7,13 +7,18 @@ import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
     JwtModule.register({
-      global:true,
+      global: true,
       secret: 'secret123',
       signOptions: { expiresIn: '1h' },
     }),
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService,],
 })
-export class AuthModule {}
+export class AuthModule{}
+// export class AuthModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer.apply(LoggerMiddleware).forRoutes('auth');
+//   }
+// }
