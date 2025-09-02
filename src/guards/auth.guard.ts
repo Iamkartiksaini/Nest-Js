@@ -33,7 +33,7 @@ export class AuthGuard implements CanActivate {
           secret: "secret123"
         }
       );
-      request['user'] = payload;
+      request['user'] = payload.user;
     } catch {
       throw new UnauthorizedException();
     }

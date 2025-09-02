@@ -9,6 +9,7 @@ import {
   Param,
   Patch,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,8 +18,11 @@ import { ObjectIdPipe } from 'src/pipes/ToObjectId';
 import { Types } from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PublicApi } from 'src/guards/public.guard';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { Roles } from 'src/roles/roles.decorator';
+import { Role } from 'src/roles/roles.enum';
+import { RolesGuard } from 'src/roles/roles.guard';
 
-  @ApiBearerAuth()
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) { }
@@ -31,8 +35,10 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  // @PublicApi()
   @Get()
-  @PublicApi()
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   findAll() {
     return this.userService.findAll();
   }
@@ -44,6 +50,9 @@ export class UserController {
     return this.userService.findById(id);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard,RolesGuard)
+  @Roles(Role.ADMIN)
   @Patch(':id')
   @ApiParam({ name: 'id', type: 'string' })
   @ApiResponse({
@@ -55,7 +64,7 @@ export class UserController {
     status: 404,
   })
   updateUser(
-    @Param('id', ObjectIdPipe) id: Types.ObjectId,
+    @Param('id',ObjectIdPipe) id: Types.ObjectId,
     @Body() body: UpdateUserDto,
   ) {
     return this.userService.updateUser(id, body);
