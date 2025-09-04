@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsOptional, IsString } from "class-validator";
+import { Expose } from 'class-transformer';
 
 export class UpdateUserDto {
   @ApiProperty({ example: "John" })
@@ -17,4 +18,14 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   password: string;
+}
+
+export class UpdateUserResDto {
+  @Expose()
+  // @Transform(({ value }) => parseFloat(value), { toClassOnly: true }) // only on input
+  // @Transform(({ value }) => value.toFixed(2), { toPlainOnly: true }) // only on output
+  name: string;
+
+  @Expose()
+  email: string;
 }

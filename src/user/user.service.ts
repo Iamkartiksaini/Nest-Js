@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from './user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateUserResDto } from './dto/update-user.dto';
+import { plainToInstance,TransformInstanceToPlain } from 'class-transformer';
 
 const USER_KEYS = 'name email role password';
 
@@ -11,7 +12,7 @@ const USER_KEYS = 'name email role password';
 export class UserService {
   constructor(
     @InjectModel(User.name) readonly userModal: Model<UserDocument>,
-  ) {}
+  ) { }
 
   async create(user_doc_body: CreateUserDto): Promise<User> {
     const createUser = new this.userModal(user_doc_body);
@@ -44,11 +45,13 @@ export class UserService {
   async updateUser(id: Types.ObjectId, body: UpdateUserDto) {
     const user = await this.userModal
       .findByIdAndUpdate(id, { $set: body }, { new: true })
-      .select('name email')
       .lean()
       .exec();
     if (!user) throw new NotFoundException('User not found');
-    return user;
+    const filteredUser = plainToInstance(UpdateUserResDto, user, {
+      excludeExtraneousValues: true,
+    });
+    return filteredUser;
   }
 
   async delete(id: Types.ObjectId) {
