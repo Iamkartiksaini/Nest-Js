@@ -16,7 +16,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { ApiBearerAuth, ApiBody, ApiHeader, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ObjectIdPipe } from 'src/pipes/ToObjectId';
 import { Types } from 'mongoose';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateUserResDto } from './dto/update-user.dto';
 import { PublicApi } from 'src/guards/public.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { Roles } from 'src/roles/roles.decorator';
@@ -51,22 +51,23 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard,RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Patch(':id')
   @ApiParam({ name: 'id', type: 'string' })
   @ApiResponse({
     description: 'This api will return updated data of user',
     status: 200,
+    type: UpdateUserResDto,
   })
   @ApiResponse({
     description: 'User not Found',
     status: 404,
   })
   updateUser(
-    @Param('id',ObjectIdPipe) id: Types.ObjectId,
+    @Param('id', ObjectIdPipe) id: Types.ObjectId,
     @Body() body: UpdateUserDto,
-  ) {
+  ): Promise<UpdateUserResDto | null> {
     return this.userService.updateUser(id, body);
   }
 
