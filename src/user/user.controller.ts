@@ -10,6 +10,7 @@ import {
   Patch,
   Req,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -22,6 +23,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { Roles } from 'src/roles/roles.decorator';
 import { Role } from 'src/roles/roles.enum';
 import { RolesGuard } from 'src/roles/roles.guard';
+import { LoggingInterceptor } from 'src/Interceptors/logger.interceptor';
 
 @Controller('users')
 export class UserController {
@@ -35,15 +37,16 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  // @PublicApi()
   @Get()
   @UseGuards(AuthGuard)
+  @PublicApi()
   @ApiBearerAuth()
   findAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
+  @UseInterceptors(LoggingInterceptor)
   @ApiParam({ name: 'id', type: 'string' })
   findById(@Param('id', ObjectIdPipe) id: Types.ObjectId) {
     console.log('api called ');

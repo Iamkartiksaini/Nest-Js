@@ -4,7 +4,7 @@ import { Model, Types } from 'mongoose';
 import { User, UserDocument } from './user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto, UpdateUserResDto } from './dto/update-user.dto';
-import { plainToInstance,TransformInstanceToPlain } from 'class-transformer';
+import { plainToInstance, TransformInstanceToPlain } from 'class-transformer';
 
 const USER_KEYS = 'name email role password';
 
