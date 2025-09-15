@@ -53,10 +53,10 @@ export class UserController {
     return this.userService.findById(id);
   }
 
+  @Patch(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  @Patch(':id')
   @ApiParam({ name: 'id', type: 'string' })
   @ApiResponse({
     description: 'This api will return updated data of user',
